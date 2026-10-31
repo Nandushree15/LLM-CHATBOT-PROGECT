@@ -98,3 +98,11 @@ Replace `YOUR_USERNAME` with your GitHub username. Before committing, confirm `.
 - In-memory history is lost when the server restarts.
 - This demo does not include user login, persistent database storage, or production rate limiting.
 - The Gemini model name may need to be changed in `.env` if it is unavailable for your account. The app retries temporarily overloaded models and then tries its built-in fallbacks.
+- <img width="1920" height="1080" alt="Screenshot (98)" src="https://github.com/user-attachments/assets/f55af51b-1d8c-44be-861e-8fdb24b26210" />
+- <img width="1920" height="1080" alt="Screenshot (95)" src="https://github.com/user-attachments/assets/100b2b97-c4eb-4365-9c8d-366909786ac2" />
+-<img width="1920" height="1080" alt="Screenshot (96)" src="https://github.com/user-attachments/assets/724c8162-c627-48a3-ac54-2c67369ea888" />
+<img width="1920" height="1080" alt="Screenshot (97)" src="https://github.com/user-attachments/assets/7b6c6782-2032-4b05-ad67-18900778534e" />
+
+
+
+
