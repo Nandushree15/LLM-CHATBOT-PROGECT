@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nandu AI — Study Assistant</title>
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; overflow: hidden; font-family: Inter, Arial, sans-serif; color: #f4f6fb; background: #090b10; }
+    button, input { font: inherit; }
+    .layout { display: grid; grid-template-columns: 270px minmax(0, 1fr); height: 100vh; }
+    .sidebar { padding: 18px 14px; background: linear-gradient(180deg, #11141c, #0d0f15); border-right: 1px solid #242833; }
+    .brand { display: flex; align-items: center; gap: 12px; padding: 5px 8px 22px; font-weight: 800; font-size: 1.18rem; }
+    .brand-mark, .avatar { display: grid; place-items: center; flex: none; border-radius: 50%; background: linear-gradient(135deg, #7868ff, #00d4ff); box-shadow: 0 0 18px #7868ff55; }
+    .brand-mark { width: 38px; height: 38px; }
+    .new-chat { width: 100%; padding: 12px; border: 1px solid #343949; border-radius: 12px; background: #20232d; color: #fff; text-align: left; cursor: pointer; }
+    .new-chat:hover { border-color: #7868ff; background: #292c38; }
+    .side-title { margin: 24px 10px 10px; color: #8b91a1; font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; }
+    .conversation { padding: 11px 10px; border-radius: 10px; color: #dfe3ef; background: #161923; border-left: 3px solid #7868ff; }
+    .profile { position: absolute; bottom: 18px; width: 242px; display: flex; align-items: center; gap: 10px; padding-top: 14px; border-top: 1px solid #292c36; }
+    .avatar { width: 36px; height: 36px; font-size: .82rem; }
+    main { min-width: 0; min-height: 0; display: grid; grid-template-rows: 64px minmax(0, 1fr) 112px; background: radial-gradient(circle at 50% 0%, #24213f55, transparent 38%), #101218; }
+    header { display: flex; align-items: center; justify-content: space-between; padding: 0 28px; border-bottom: 1px solid #252832; }
+    header h1 { margin: 0; font-size: 1rem; }
+    .online { color: #55dc8b; font-size: .78rem; }
+    #chat { min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-gutter: stable; padding: 28px max(24px, calc((100% - 820px) / 2)); }
+    .bubble-wrap { display: flex; gap: 12px; margin-bottom: 24px; animation: appear .18s ease-out; }
+    .bubble-wrap.user { flex-direction: row-reverse; }
+    .bubble { max-width: min(680px, 78%); padding: 13px 16px; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.55; }
+    .bot .bubble { border-radius: 4px 18px 18px 18px; background: #1a1d27; border: 1px solid #292d38; }
+    .user .bubble { border-radius: 18px 4px 18px 18px; background: linear-gradient(135deg, #6555e9, #8b5cf6); box-shadow: 0 8px 24px #6555e933; }
+    .mini-avatar { width: 30px; height: 30px; display: grid; place-items: center; flex: none; border-radius: 8px; background: linear-gradient(135deg, #7868ff, #00d4ff); font-size: .72rem; font-weight: 800; }
+    .composer { padding: 14px max(24px, calc((100% - 820px) / 2)) 12px; }
+    form { display: flex; align-items: center; gap: 10px; padding: 8px; border: 1px solid #343846; border-radius: 18px; background: #171921; box-shadow: 0 12px 35px #0005; }
+    form:focus-within { border-color: #7868ff; box-shadow: 0 0 0 3px #7868ff22, 0 12px 35px #0005; }
+    input { flex: 1; min-width: 0; padding: 8px 10px; border: 0; outline: 0; color: white; background: transparent; }
+    #send { width: 42px; height: 42px; border: 0; border-radius: 12px; color: white; background: linear-gradient(135deg, #7868ff, #00b9d5); cursor: pointer; font-weight: 900; }
+    #send:disabled { opacity: .55; cursor: wait; }
+    #status { min-height: 18px; margin: 7px 12px 0; color: #aeb4c3; font-size: .78rem; }
+    @keyframes appear { from { opacity: 0; transform: translateY(5px); } }
+    @media (max-width: 760px) { .layout { grid-template-columns: 1fr; } .sidebar { display: none; } main { grid-template-rows: 58px minmax(0, 1fr) 105px; } .bubble { max-width: 84%; } header { padding: 0 18px; } }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand"><span class="brand-mark">N</span><span>Nandu AI</span></div>
+      <button id="new-chat" class="new-chat" type="button">＋ &nbsp; New conversation</button>
+      <div class="side-title">Recent</div>
+      <div class="conversation">Study assistant</div>
+      <div class="profile"><span class="avatar">NA</span><div><strong>Nandu</strong><br><small>Free plan</small></div></div>
+    </aside>
+
+    <main>
+      <header><h1>Study Assistant</h1><span class="online">● Online</span></header>
+      <section id="chat" aria-live="polite">
+        <div class="bubble-wrap bot">
+          <span class="mini-avatar">AI</span>
+          <div class="bubble">Hi Nandu! 👋 Ask me anything and I'll explain it clearly.</div>
+        </div>
+      </section>
+      <div class="composer">
+        <form id="chat-form">
+          <input id="message" name="message" maxlength="4000" placeholder="Message StudyBot..." autocomplete="off" required>
+          <button id="send" type="submit" aria-label="Send message">➤</button>
+        </form>
+        <p id="status" role="status"></p>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const chat = document.getElementById("chat");
+    const form = document.getElementById("chat-form");
+    const input = document.getElementById("message");
+    const sendButton = document.getElementById("send");
+    const status = document.getElementById("status");
+    const newChatButton = document.getElementById("new-chat");
+
+    let conversationId = "";
+
+    function addBubble(speaker, text, kind) {
+      const row = document.createElement("div");
+      row.className = `bubble-wrap ${kind}`;
+      const avatar = document.createElement("span");
+      avatar.className = kind === "user" ? "avatar" : "mini-avatar";
+      avatar.textContent = kind === "user" ? "NA" : "AI";
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+      bubble.textContent = text;
+      row.append(avatar, bubble);
+      chat.appendChild(row);
+      requestAnimationFrame(() => {
+        chat.scrollTop = chat.scrollHeight;
+      });
+    }
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const message = input.value.trim();
+      if (!message || sendButton.disabled) return;
+
+      addBubble("You", message, "user");
+      input.value = "";
+      sendButton.disabled = true;
+      status.textContent = "StudyBot is thinking...";
+
+      try {
+        const response = await fetch("/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: message,
+            conversation_id: conversationId
+          })
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.error || "The request failed. Please try again.");
+        }
+
+        conversationId = data.conversation_id;
+        addBubble("StudyBot", data.reply, "bot");
+        status.textContent = "";
+      } catch (error) {
+        status.textContent = error.message || "Connection failed. Please try again.";
+      } finally {
+        sendButton.disabled = false;
+        input.focus();
+      }
+    });
+
+    newChatButton.addEventListener("click", () => {
+      conversationId = "";
+      chat.replaceChildren();
+      addBubble("StudyBot", "New conversation started. What would you like to learn?", "bot");
+      status.textContent = "New conversation started.";
+      input.focus();
+    });
+  </script>
+</body>
+</html>
